@@ -6,7 +6,7 @@ Drone plugin for deploying to [github-changelog-generator](https://github.com/gi
 
 ## Usage
 
-This plugin can be used to create a changelog based on GitHub tags, it will not auto-push it into the repo but rather create a changelog file for you to upload into your desired location via other Drone plugins.
+This plugin can be used to create a changelog file based on GitHub tags, it will not auto-push it into the repo but rather create a changelog file for you to upload into your desired location via other Drone plugins.
 
 The below pipeline configuration demonstrates simple usage:
 
