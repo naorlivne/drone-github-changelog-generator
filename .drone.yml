@@ -11,7 +11,8 @@ steps:
   image: plugins/docker
   when:
     event:
-      - push
+      include:
+        - push
     branch:
       include:
         - master
@@ -39,7 +40,8 @@ steps:
   image: plugins/docker
   when:
     event:
-      - push
+      include:
+        - push
     branch:
       include:
         - master
@@ -67,7 +69,8 @@ steps:
   image: plugins/docker
   when:
     event:
-      - push
+      include:
+        - push
     branch:
       include:
         - master
@@ -96,7 +99,8 @@ steps:
   image: plugins/manifest
   when:
     event:
-      - push
+      include:
+        - push
   settings:
     username:
       from_secret: docker_username
@@ -116,7 +120,8 @@ steps:
     github_project: ${DRONE_REPO_NAME}
   when:
     event:
-      - push
+      include:
+        - push
 
 - name: publish_github_release
   image: plugins/github-release
@@ -128,7 +133,8 @@ steps:
     note: CHANGELOG.md
   when:
     event:
-      - push
+      include:
+        - push
 
 depends_on:
 - amd64_build
