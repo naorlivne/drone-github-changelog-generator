@@ -1,0 +1,159 @@
+kind: pipeline
+type: docker
+name: amd64_build
+
+platform:
+  os: linux
+  arch: amd64
+
+steps:
+- name: docker_build_version
+  image: plugins/docker
+  when:
+    event:
+      - push
+      - tag
+  settings:
+    username:
+      from_secret: docker_username
+    password:
+      from_secret: docker_password
+    repo: naorlivne/drone-github-changelog-generator
+    tags:
+      - linux-amd64
+      - linux-amd64-v${DRONE_BUILD_NUMBER}
+
+---
+kind: pipeline
+type: docker
+name: arm64_build
+
+platform:
+  os: linux
+  arch: arm64
+
+steps:
+- name: docker_build_version
+  image: plugins/docker
+  when:
+    event:
+      - push
+      - tag
+  settings:
+    username:
+      from_secret: docker_username
+    password:
+      from_secret: docker_password
+    repo: naorlivne/drone-metronome
+    tags:
+      - linux-arm64
+      - linux-arm64-v${DRONE_BUILD_NUMBER}
+
+---
+kind: pipeline
+type: docker
+name: arm_build
+
+platform:
+  os: linux
+  arch: arm
+
+steps:
+- name: docker_build_version
+  image: plugins/docker
+  when:
+    event:
+      - push
+      - tag
+  settings:
+    username:
+      from_secret: docker_username
+    password:
+      from_secret: docker_password
+    repo: naorlivne/drone-metronome
+    tags:
+      - linux-arm
+      - linux-arm-v${DRONE_BUILD_NUMBER}
+
+---
+kind: pipeline
+type: docker
+name: publish_docker_manifest
+
+trigger:
+  event:
+  - push
+  - tag
+
+steps:
+- name: manifest
+  image: plugins/manifest
+  settings:
+    username:
+      from_secret: docker_username
+    password:
+      from_secret: docker_password
+    target:  naorlivne/drone-metronome
+    template: naorlivne/drone-metronome:OS-ARCH
+    platforms:
+      - linux/amd64
+      - linux/arm64
+      - linux/arm
+
+depends_on:
+- amd64_build
+- arm64_build
+- arm_build
+
+---
+kind: pipeline
+type: docker
+name: publish_docker_manifest_build_number
+
+trigger:
+  event:
+  - push
+  - tag
+
+steps:
+- name: manifest
+  image: plugins/manifest
+  settings:
+    username:
+      from_secret: docker_username
+    password:
+      from_secret: docker_password
+    target:  naorlivne/drone-metronome:v${DRONE_BUILD_NUMBER}
+    template: naorlivne/drone-metronome:OS-ARCH-v${DRONE_BUILD_NUMBER}
+    platforms:
+      - linux/amd64
+      - linux/arm64
+      - linux/arm
+
+depends_on:
+- amd64_build
+- arm64_build
+- arm_build
+
+---
+kind: pipeline
+type: docker
+name: notify
+
+steps:
+- name: notify
+  image: drillster/drone-email
+  settings:
+    host: aspmx.l.google.com
+    port: 25
+    from: dronealert@dronealert.com
+    recipients: [ naorlivne@gmail.com ]
+    recipients_only: true
+
+trigger:
+  status:
+  - failure
+
+depends_on:
+- publish_docker_manifest
+- publish_docker_manifest_build_number
