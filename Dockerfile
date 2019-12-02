@@ -1,4 +1,4 @@
-FROM naorlivne/github-changelog-generator-dockerized
+FROM naorlivne/github-changelog-generator-dockerized:v1
 
 ENV PLUGIN_OUTPUT_PATH=CHANGELOG.md
 
