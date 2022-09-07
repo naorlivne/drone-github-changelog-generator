@@ -54,33 +54,6 @@ steps:
 ---
 kind: pipeline
 type: docker
-name: arm_build
-
-platform:
-  os: linux
-  arch: arm
-
-steps:
-- name: docker_build_version
-  image: plugins/docker
-  when:
-    event:
-      - push
-    branch: 
-      - master
-  settings:
-    username:
-      from_secret: docker_username
-    password:
-      from_secret: docker_password
-    repo: naorlivne/drone-github-changelog-generator
-    tags:
-      - linux-arm
-      - linux-arm-v${DRONE_BUILD_NUMBER}
-
----
-kind: pipeline
-type: docker
 name: publish_docker_manifest
 
 trigger:
@@ -107,7 +80,6 @@ steps:
 depends_on:
 - amd64_build
 - arm64_build
-- arm_build
 
 ---
 kind: pipeline
@@ -138,7 +110,6 @@ steps:
 depends_on:
 - amd64_build
 - arm64_build
-- arm_build
 
 ---
 kind: pipeline
@@ -162,7 +133,6 @@ steps:
 depends_on:
 - amd64_build
 - arm64_build
-- arm_build
 
 ---
 kind: pipeline
