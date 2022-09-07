@@ -75,7 +75,6 @@ steps:
     platforms:
       - linux/amd64
       - linux/arm64
-      - linux/arm
 
 depends_on:
 - amd64_build
@@ -105,7 +104,6 @@ steps:
     platforms:
       - linux/amd64
       - linux/arm64
-      - linux/arm
 
 depends_on:
 - amd64_build
